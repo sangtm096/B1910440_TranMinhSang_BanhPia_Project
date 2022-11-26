@@ -9,7 +9,7 @@ import ShoppingCart from "../components/ShoppingCart.vue"
 
 const routes = [
     {
-        path: "/",
+        path: "/home",
         name: "HomePage",
         component: HomePage,
         props: true
@@ -17,7 +17,7 @@ const routes = [
     {
         path: "/product",
         name: "ProductPage",
-        component: () => import("@/views/Product.vue"),
+        component: () => import("@/views/ProductScreen.vue"),
     },
     
     {
@@ -56,7 +56,7 @@ const routes = [
         props: true
     },
     {
-        path: "/login",
+        path: "/",
         name: "LoginPage",
         component: LoginPage,
         props: true

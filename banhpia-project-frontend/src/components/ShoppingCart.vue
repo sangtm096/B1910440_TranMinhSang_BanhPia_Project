@@ -1,9 +1,12 @@
 <template>
+  <div>
+    <AppHeaderVue />
+  </div>
   <section>
     <div class="container">
       <div class="row">
         <div class="col">
-          <h4 class="text-center">
+          <h4 class="text-right">
             Tổng số tiền:
             {{ `${totalMoney().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Đồng` }}
           </h4>
@@ -78,7 +81,11 @@
 </template>
 
 <script>
+import AppHeaderVue from "./AppHeader.vue";
 export default {
+  components: {
+    AppHeaderVue,
+  },
   name: "ShoppingCart",
   data() {
     return {

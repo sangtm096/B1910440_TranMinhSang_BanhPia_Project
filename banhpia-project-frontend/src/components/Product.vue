@@ -79,7 +79,7 @@ export default {
 .list-group-item {
   width: 280px;
   border: 1px solid #ccc;
-  margin: 5px 2px;
+  margin: 10px 3px;
 }
 
 .list-group-item + .list-group-item {
@@ -107,5 +107,9 @@ export default {
   object-fit: cover;
   display: block;
   width: 100%;
+}
+
+.header {
+  max-width: 1200px;
 }
 </style>

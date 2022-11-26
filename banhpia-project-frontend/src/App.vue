@@ -10,7 +10,7 @@ export default {
 
 <template>
   <div id="app">
-    <AppHeader />
+    <!-- <AppHeader /> -->
 
     <div class="container">
       <router-view />
@@ -24,9 +24,9 @@ export default {
   margin: auto;
 }
 
-.login_page, .register_page {
+.login_page,
+.register_page {
   max-width: 400px;
   margin: 0 auto;
 }
-
 </style>

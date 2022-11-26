@@ -1,18 +1,21 @@
 const { ObjectId } = require("mongodb");
-
-class UserService {
-    constructor(client) {
+    class UserService {
+        constructor(client) {
         this.User = client.db().collection("users");
     }
+    
     // Định nghĩa các phương thức truy xuất CSDL sử dụng mongodb API
     extractUserData(payload) {
+        const createdAt = new Date();
+
         const user = {
-            name: payload.name,
             email: payload.email,
-            pass: payload.pass,
             role: payload.role,
+            password: payload.password,
+            createdAt: createdAt
         };
-        // Remove underfined fields
+        
+        // Xóa các trường không xác định
         Object.keys(user).forEach(
             (key) => user[key] === undefined && delete user[key]
         );
@@ -23,15 +26,17 @@ class UserService {
         const user = this.extractUserData(payload);
         const result = await this.User.findOneAndUpdate(
             user,
-            { returnDocument: "after", upsert: true } 
+            { $set: { "role": "user" } },
+            { returnDocument: "after", upsert: true }
         );
         return result.value;
     }
 
-    async login(email) {
-        const user = await this.findByEmail(email);
+    async login(payload) {
+        const user = await this.findByEmail(payload.email);
         return user;
     }
+
     async find(filter) {
         const cursor = await this.User.find(filter);
         return await cursor.toArray();
@@ -39,7 +44,7 @@ class UserService {
 
     async findByEmail(email) {
         return await this.find({
-        email: { $regex: new RegExp(email), $options: "i" },
+            email: { $regex: new RegExp(email), $options: "i" },
         });
     }
 
@@ -69,14 +74,9 @@ class UserService {
         return result.value;
     }
 
-    async findFavorite() {
-        return await this.find({ favorite: true });
-    }
-
     async deleteAll() {
         const result = await this.User.deleteMany({});
         return result.deletedCount;
     }
 }
-
 module.exports = UserService;

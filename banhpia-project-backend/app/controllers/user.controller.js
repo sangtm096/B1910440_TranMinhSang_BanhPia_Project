@@ -2,10 +2,10 @@ const UserService = require("../services/user.service");
 const MongoDB = require("../utils/mongodb.util");
 const ApiError = require("../api-error");
 
-// Create and Save a new User
+//Tạo và lưu trữ một user mới
 exports.create = async (req, res, next) => {
-    if (!req.body?.name) {
-        return next(new ApiError(400, "Name can not be empty"));
+    if (!req.body?.email) {
+        return next(new ApiError(400, "Email không được để trống"));
     }
 
     try {
@@ -14,137 +14,126 @@ exports.create = async (req, res, next) => {
         return res.send(document);
     } catch (error) {
         return next(
-            new ApiError(500, "An error occurred while creating the user")
+            new ApiError(500, "Đã xảy ra lỗi khi tạo tài khoản mới")
         );
     }
 }; 
 
 exports.login = async (req, res, next) => {
     if (!req.body?.email) {
-        return next(new ApiError(400, "Name can not be empty"));
+        return next(new ApiError(400, "Email không được để trống"));
     }
 
     try {
         const userService = new UserService(MongoDB.client);
-        const document = await userService.login(req.body.email);
+        const document = await userService.login(req.body);
         const data = {
             id: document[0]._id,
             role: document[0].role,
-            createAt: document[0].createAt
+            createAt: document[0].createdAt,
         }
-        return res.send(data);
+        if (document[0].email === req.body.email && document[0].password === req.body.password) {
+            return res.send(data);
+        }
+        return res.send({});
     } catch (error) {
         return next(
-            new ApiError(500, "An error occurred while creating the user")
+            new ApiError(500, "Xảy ra lỗi khi login")
         );
     }
-}; 
-// Retrieve all users of a user from the database
+};
+
+
+// Truy xuất tất cả các tài khoản từ cơ sở dữ liệu
 exports.findAll =  async (req, res, next) => {
     let documents = [];
 
     try {
         const userService = new UserService(MongoDB.client);
-        const { name } = req.query;
-        if (name) {
-            documents = await userService.findByName(name);
+        const { email } = req.query;
+        if (email) {
+            documents = await userService.findByEmail(email);
         } else {
             documents = await userService.find({});
         }
     } catch (error) {
         return next(
-            new ApiError(500, "An error occurred while retrieving users")
+            new ApiError(500, "Đã xảy ra lỗi khi truy xuất tài khoản")
         );
     }
 
     return res.send(documents);
 }; 
 
-// Find a single user with an id
+// Tìm một tài khoản duy nhất với một id
 exports.findOne = async (req, res, next) => {
     try {
         const userService = new UserService(MongoDB.client);
         const document = await userService.findById(req.params.id);
         if (!document) {
-            return next(new ApiError(404, "User not found"));
+            return next(new ApiError(404, "Tài khoản không được tìm thấy"));
         }
         return res.send(document);
     } catch (error) {
         return next(
             new ApiError(
                 500,
-                `Error retrieving user with id=${req.params.id}`
+                `Lỗi khi truy xuất sản phẩm với id=${req.params.id}`
             )
         );
     }
 }; 
 
-// Update a user by the id in the request
+// Cập nhật tài khoản theo id
 exports.update = async (req, res, next) => {
     if (Object.keys(req.body).length === 0) {
-        return next(new ApiError(400, "Data to update can not be empty"));
+        return next(new ApiError(400, "Dữ liệu để cập nhật không được để trống"));
     }
 
     try {
         const userService = new UserService(MongoDB.client);
         const document = await userService.update(req.params.id, req.body);
         if (!document) {
-            return next(new ApiError(404, "User not found"));
+            return next(new ApiError(404, "Tài khoản không được tìm thấy"));
         }
-        return res.send({ message: "User was updated successfully"});
+        return res.send({ message: "Tài khoản đã được cập nhật thành công"});
     } catch (error) {
         return next(
-            new ApiError(500, `Error updating user with id=${req.params.id}`)
+            new ApiError(500, `Lỗi khi cập nhật tài khoản với id=${req.params.id}`)
         );
     }
 }; 
 
-// Delete a user with the specified id in the request
+// Xóa tài khoản theo id
 exports.delete = async (req, res, next) => {
     try {
         const userService = new UserService(MongoDB.client);
         const document = await userService.delete(req.params.id);
         if (!document) {
-            return next(new ApiError(404, "User not found"));
+            return next(new ApiError(404, "Tài khoản không được tìm thấy"));
         }
-        return res.send({ message: "User was deleted successfully"});
+        return res.send({ message: "Tài khoản đã được xóa thành công"});
     } catch (error) {
         return next(
             new ApiError(
                 500,
-                `Could not delete user with id=${req.params.id}`
+                `Không thể xóa tài khoản với id=${req.params.id}`
             )
         );
     }
 }; 
 
-// Delete all users of a user from the database
+// Xóa tất cả các tài khoản từ CSDL
 exports.deleteAll = async (_req, res, next) => {
     try {
         const userService = new UserService(MongoDB.client);
         const deletedCount = await userService.deleteAll();
         return res.send({
-            message: `${deletedCount} users were deleted successfully`,
+            message: `${deletedCount} Tài khoản đã được xóa thành công`,
         });
     } catch (error) {
         return next(
-            new ApiError(500, "An error occurred while removing all users")
-        );
-    }
-}; 
-
-// Find all favorite users of a user
-exports.findAllFavorite = async (_req, res, next) => {
-    try {
-        const userService = new UserService(MongoDB.client);
-        const documents = await userService.findFavorite();
-        return res.send(documents);
-    } catch (error) {
-        return next(
-            new ApiError(
-                500,
-                "An error occurred while retrieving favorite users"
-            )
+            new ApiError(500, "Đã xảy ra lỗi khi xóa tất cả tài khoản")
         );
     }
 }; 
