@@ -96,10 +96,17 @@ export default {
 .product_price {
   color: orangered;
   text-align: center;
+  font-size: 18px;
+  font-weight: 600;
 }
 
 .btn_cart {
   margin-left: 48px;
+}
+
+.btn_cart:hover {
+  background: orange;
+  color: #fff;
 }
 
 .product_img img {

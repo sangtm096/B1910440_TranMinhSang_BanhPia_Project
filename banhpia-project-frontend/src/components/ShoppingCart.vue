@@ -103,12 +103,6 @@ export default {
       localStorage.setItem("cart", saveobject);
     },
     totalMoney() {
-      // const total = this.products.reduce(
-      //   ({ price, amount }, currentValue) =>
-      //     Number.parseInt(price) * amount + currentValue,
-      //   0
-      // );
-      // return total;
       let total = 0;
       for (let i = 0; i < this.products.length; i++) {
         total += this.products[i].price * this.products[i].amount;

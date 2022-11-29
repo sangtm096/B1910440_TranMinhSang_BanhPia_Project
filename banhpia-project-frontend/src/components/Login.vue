@@ -119,7 +119,7 @@ export default {
 
 <style scoped>
 .container {
-  margin-top: 50px;
+  margin-top: 50;
 }
 .image img {
   width: 300px;

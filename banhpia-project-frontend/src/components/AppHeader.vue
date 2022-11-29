@@ -80,5 +80,6 @@ export default {
 
 .nav-link {
   float: left;
+  font-size: 20px;
 }
 </style>
